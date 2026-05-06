@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Escuela de Idiomas del Ejército</title>
+
+    <!-- ===== ESCALADO AUTOMÁTICO: en móviles fuerza viewport a 1024px ===== -->
+    <script>
+        if (screen.width < 920) {
+            document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1024, user-scalable=yes');
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --navy:#0b2447;
+            --navy-2:#19376d;
+            --navy-3:#0f2a5c;
+            --mustard:#e1b12c;
+            --mustard-2:#f6c945;
+            --bg:#eef2f7;
+            --surface:#ffffff;
+            --text:#0b1b34;
+            --muted:#5b6b85;
+            --line:#dbe2ec;
+            --ok:#1f8a4c;
+            --err:#c0392b;
+        }
+
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        @media print { body { display: none !important; } }
+
+        html,body{height:100%;}
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background:
+                radial-gradient(1200px 600px at 10% -10%, rgba(225,177,44,.18), transparent 60%),
+                radial-gradient(900px 500px at 110% 110%, rgba(11,36,71,.18), transparent 60%),
+                var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .container {
+            background: var(--surface);
+            padding: 24px 36px 36px;
+            border-radius: 22px;
+            box-shadow: 0 20px 60px rgba(11,36,71,.18);
+            width: 95%;
+            max-width: 1100px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--line);
+        }
+
+        .brand-bar{
+            display:flex; align-items:center; justify-content:space-between;
+            padding-bottom:14px; margin-bottom:8px;
+            border-bottom:1px solid var(--line);
+        }
+        .brand-bar .brand{
+            display:flex; align-items:center; gap:10px;
+            font-weight:700; color:var(--navy); letter-spacing:.5px;
+        }
+        .brand-bar .brand .dot{
+            width:10px;height:10px;border-radius:50%;
+            background:var(--mustard); box-shadow:0 0 0 4px rgba(225,177,44,.25);
+        }
+        .brand-bar .tag{
+            font-size:.78em; color:var(--muted); font-weight:500;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .nav-panel {
+            width: 200px;
+            background: linear-gradient(180deg,#f7f9fc, #eef2f7);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            max-height: 540px;
+            display: none;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+
+        .nav-item {
+            aspect-ratio: 1;
+            display: flex; align-items: center; justify-content: center;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: .72em;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+        }
+        .nav-item:hover{ transform: translateY(-1px); }
+        .nav-item.active { border: 2px solid var(--navy); color: var(--navy); background: #e7eefb; }
+        .nav-item.answered { background: var(--mustard); color: var(--navy); border-color: var(--mustard); }
+
+        .content-area { flex: 1; }
+        .pregunta-box { display: none; width: 100%; }
+
+        .header-pregunta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 8px 0 14px; padding: 0 6px; gap:14px;
+        }
+
+        .texto-pregunta {
+            font-size: 1.55em;
+            font-weight: 700;
+            color: var(--navy);
+            flex: 1; text-align: center;
+            letter-spacing:.2px;
+            line-height: 1.35;
+        }
+
+        /* Clase para preguntas con texto largo (ej. pregunta 49) */
+        .texto-pregunta.texto-largo {
+            font-size: 0.92em;
+            text-align: left;
+            line-height: 1.5;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .tiempo-global {
+            background: var(--navy);
+            color: var(--mustard-2);
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-family: 'Poppins', monospace;
+            font-size: 1.15em;
+            font-weight: 700;
+            border: 2px solid var(--mustard);
+            box-shadow: 0 6px 18px rgba(11,36,71,.25);
+            letter-spacing:1px;
+            flex-shrink: 0;
+        }
+
+        .bloque-contenido { width: 100%; max-width: 870px; margin: 0 auto; }
+
+        .imagen-pregunta {
+            width: 100%; height: auto; max-height: 380px; object-fit: contain;
+            margin: 0 auto 28px; border-radius: 14px; display: block;
+            border: 1px solid var(--line); pointer-events: none;
+            background:#fafbfd;
+        }
+
+        .layout-etapa2 { display: flex; align-items: center; gap: 30px; text-align: center; margin-bottom: 28px; }
+        .img-lateral { flex: 1; max-width: 350px; border-radius: 12px; border: 1px solid var(--line); }
+        .columna-opciones { flex: 1; display: flex; flex-direction: column; gap: 10px; text-align: center; }
+
+        .contenedor-opciones-circular {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            width: 100%; margin-bottom: 36px; gap:8px;
+        }
+        .contenedor-opciones-vertical {
+            display: flex; flex-direction: column; gap: 12px;
+            width: 100%; max-width: 520px; margin: 0 auto 32px;
+        }
+
+        .division-opcion { display:flex; justify-content:center; align-items:center; }
+
+        .opcion-btn-circular {
+            width: 68px; height: 68px; border-radius: 50%;
+            border: 2px solid var(--line);
+            background:#fff; cursor:pointer;
+            font-size: 1.35em; color: var(--navy); font-weight: 700;
+            display:flex; align-items:center; justify-content:center;
+            transition: all .2s ease;
+            box-shadow: 0 3px 10px rgba(11,36,71,.06);
+        }
+        .opcion-btn-circular:hover{ border-color: var(--mustard); transform: translateY(-2px); }
+
+        .opcion-btn-vertical {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 2px solid var(--line);
+            background:#fff;
+            cursor:pointer;
+            font-size: 1.05em;
+            text-align: left;
+            transition: .2s ease;
+            font-weight: 500;
+            color: var(--text);
+            box-shadow: 0 3px 10px rgba(11,36,71,.04);
+        }
+        .opcion-btn-vertical:hover{ border-color: var(--mustard); }
+
+        .opcion-btn-circular.seleccionada, .opcion-btn-vertical.seleccionada {
+            background: var(--navy);
+            color: var(--mustard-2);
+            border-color: var(--mustard);
+            box-shadow: 0 8px 22px rgba(11,36,71,.35);
+        }
+
+        .timer-container {
+            width: 100%; background-color: #e9eef5;
+            border-radius: 20px; margin: 8px auto;
+            height: 10px; overflow: hidden;
+        }
+        .timer-bar {
+            height: 100%; width: 100%;
+            background: linear-gradient(90deg, var(--mustard), var(--mustard-2));
+        }
+
+        .contador-texto { font-size: .92em; color: var(--muted); margin-top: 4px; }
+
+        .btn-primario {
+            padding: 14px 32px; cursor:pointer; border-radius: 12px; border: none;
+            background: linear-gradient(180deg, var(--navy-2), var(--navy));
+            color: #fff; font-weight: 700; font-size: 1.05em;
+            font-family: inherit;
+            transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+            box-shadow: 0 10px 22px rgba(11,36,71,.28);
+            letter-spacing:.3px;
+        }
+        .btn-primario:hover{ transform: translateY(-1px); filter:brightness(1.05); }
+
+        .btn-mostaza{
+            background: linear-gradient(180deg, var(--mustard-2), var(--mustard));
+            color: var(--navy);
+            box-shadow: 0 10px 22px rgba(225,177,44,.4);
+        }
+
+        .btn-pausa { display: none !important; }
+
+        .btn-siguiente {
+            margin-top: 18px;
+            padding: 12px 42px;
+            background: linear-gradient(180deg, var(--mustard-2), var(--mustard));
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700; font-size: 1.05em;
+            font-family: inherit;
+            cursor:pointer;
+            box-shadow: 0 10px 22px rgba(225,177,44,.4);
+            transition: transform .15s ease, filter .15s ease;
+        }
+        .btn-siguiente:hover{ transform: translateY(-1px); filter:brightness(1.04); }
+
+        #btnGuardarEnviar { display:none; margin-top:18px; }
+
+        #aviso-conexion, #pantalla-carga-final {
+            display:none; position:absolute; inset:0;
+            background: rgba(255,255,255,.98);
+            z-index: 9999; border-radius: 22px;
+            flex-direction: column; justify-content:center; align-items:center;
+        }
+
+        .loader-container {
+            position: relative; width: 84px; height: 84px;
+            display:flex; align-items:center; justify-content:center;
+            margin-bottom: 18px;
+        }
+        .spinner-red {
+            position: absolute; width: 100%; height: 100%;
+            border: 6px solid #eef2f7;
+            border-top: 6px solid var(--mustard);
+            border-right: 6px solid var(--navy);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .logo-spinner { width: 42px; height: 42px; object-fit: contain; }
+        @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+
+        #modal-confirmacion, #modal-salir {
+            display:none; position:fixed; inset:0;
+            background: rgba(11,27,52,.55);
+            z-index:10000; justify-content:center; align-items:center;
+            backdrop-filter: blur(2px);
+        }
+        .modal-content {
+            background: #fff; padding: 28px;
+            border-radius: 16px; max-width: 420px;
+            text-align: center;
+            border-top: 6px solid var(--mustard);
+            box-shadow: 0 20px 60px rgba(0,0,0,.3);
+        }
+        .modal-content h3{ margin:0 0 8px; color:var(--navy); }
+        .modal-content p{ margin:0 0 6px; color:var(--muted); }
+
+        .input-carnet {
+            padding: 13px 14px; font-size: 1.15em;
+            border: 2px solid var(--navy);
+            border-radius: 10px;
+            margin-bottom: 18px;
+            width: 280px;
+            text-align: center;
+            font-family: inherit;
+            user-select: text !important; -webkit-user-select: text !important;
+            color: var(--navy); font-weight:600;
+        }
+        .input-carnet:focus{ border-color: var(--mustard); box-shadow: 0 0 0 4px rgba(225,177,44,.25); }
+
+        #pantalla-inicio h2{
+            color: var(--navy); margin: 4px 0 8px; font-weight:800; letter-spacing:.5px;
+        }
+        .instr{
+            text-align:left;
+            background:#f7f9fc;
+            border:1px solid var(--line);
+            border-left:6px solid var(--mustard);
+            padding:16px 20px; border-radius:12px;
+            color:#3b4a66; font-size:.95em; line-height:1.55;
+            max-width: 780px; margin: 18px auto 24px;
+        }
+        .instr h3{ color: var(--navy); margin: 0 0 8px; }
+
+        .card-resultado {
+            padding: 18px 26px;
+            border: 2px solid var(--navy);
+            background: #fff;
+            border-top: 8px solid var(--mustard);
+            border-radius: 16px;
+            text-align: center;
+            max-width: 560px;
+            margin: 10px auto;
+        }
+        .card-resultado h3{ color: var(--navy); margin: 6px 0 10px; letter-spacing:.5px; }
+        .detalle-final {
+            text-align: left;
+            background: #f7f9fc;
+            padding: 14px 20px;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: .98em;
+            border:1px solid var(--line);
+        }
+        .detalle-final p{ margin: 4px 0; }
+        .nota-destacada {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--navy);
+            background: linear-gradient(180deg, #fff8e1, #fdecb1);
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 10px;
+            display: block;
+            border:1px solid var(--mustard);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body oncontextmenu="return false" onkeydown="return manejarBloqueoTeclado(event)" ondragstart="return false">
+
+<div id="modal-confirmacion">
+    <div class="modal-content">
+        <h3>¿Confirmar Envío?</h3>
+        <p>Una vez enviado, no podrá corregir sus respuestas.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:18px;">
+            <button onclick="cerrarModal()" class="btn-siguiente" style="background:#dfe5ee; color:var(--navy); padding:10px 20px;">Cancelar</button>
+            <button onclick="procesarEnvioFinal()" class="btn-primario" style="padding:10px 20px;">Sí, enviar todo</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-salir">
+    <div class="modal-content">
+        <h3>¿Desea salir del examen?</h3>
+        <p>Si sale ahora se perderá el avance no guardado.</p>
+        <div style="display:flex; gap:10px; justify-content:center; margin-top:18px;">
+            <button onclick="cancelarSalida()" class="btn-siguiente" style="padding:10px 20px;">Cancelar</button>
+            <button onclick="confirmarSalida()" class="btn-primario" style="padding:10px 20px; background:linear-gradient(180deg,#a32424,#7d1313);">Aceptar</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="brand-bar">
+        <div class="brand"><span class="dot"></span> EIE · Escuela de Idiomas del Ejército</div>
+        <div class="tag">TEST BOOK 22</div>
+    </div>
+
+    <div id="pantalla-carga-final">
+        <div class="loader-container">
+            <div class="spinner-red"></div>
+            <img src="LOGO_EIE.png" class="logo-spinner" id="img-loader" onerror="this.style.display='none'">
+        </div>
+        <h3 id="mensaje-carga-final" style="color:var(--navy);">Procesando...</h3>
+    </div>
+
+    <div id="aviso-conexion">
+        <div class="loader-container">
+            <div class="spinner-red"></div>
+            <img src="LOGO_EIE.png" class="logo-spinner" alt="Cargando..." onerror="this.style.display='none'">
+        </div>
+        <strong style="color: var(--err); font-size: 1.25em;">SIN CONEXIÓN</strong>
+        <p id="texto-estado" style="color: var(--muted);">Reintentando conectar… El examen continuará automáticamente.</p>
+    </div>
+
+    <div id="pantalla-inicio">
+        <h2>EIE TEST BOOK 22</h2>
+        <div style="margin-bottom: 14px;">
+            <p style="color:var(--muted);">Ingrese su Número de Carnet para comenzar:</p>
+            <input type="text" id="input-carnet" class="input-carnet" placeholder="C.I. del Estudiante" onfocus="enFocoInput=true" onblur="enFocoInput=false">
+        </div>
+        <div class="instr">
+            <h3>INSTRUCCIONES PARA EL EXAMEN</h3>
+            Si dará el examen en un dispositivo móvil deberá activar la opción <b>Sitio para computadora</b> y subir el volumen al máximo.<br>
+            Una vez presionado <b>COMENZAR AHORA</b>, el examen iniciará con la 1ra parte (Listening).<br>
+            Preguntas <b>1 al 25</b>: escuchará audios y elegirá una opción (A, B, C, D). Tiempo límite de <b>20 segundos por pregunta</b>.<br>
+            Preguntas <b>26 al 50</b> (Reading): sin límite por pregunta.<br>
+            Duración máxima del examen: <b>45 minutos</b>. Al llegar a 45:00 el examen se enviará automáticamente.<br>
+            Si pierde la señal el sistema esperará y reanudará en la pregunta donde se quedó.<br>
+            Al terminar las 50 preguntas podrá revisar y modificar respuestas, y luego presionar <b>GUARDAR Y ENVIAR</b>.
+        </div>
+        <button id="btnIniciar" class="btn-primario">Comenzar Ahora</button>
+    </div>
+
+    <div class="main-layout">
+        <div id="nav-panel" class="nav-panel">
+            <h4 style="margin:0 0 8px; font-size:.78em; color:var(--navy); letter-spacing:1.5px;">NAVEGACIÓN</h4>
+            <div id="nav-grid" class="nav-grid"></div>
+        </div>
+
+        <div id="pantalla-pregunta" class="pregunta-box">
+            <div class="header-pregunta">
+                <span class="texto-pregunta" id="texto-pregunta">Cargando...</span>
+                <div class="tiempo-global" id="reloj-global">45:00</div>
+            </div>
+
+            <div id="zona-dinamica" class="bloque-contenido">
+                <div id="espacio-imagen"></div>
+                <div id="contenedor-opciones"></div>
+            </div>
+
+            <div id="wrapper-timer">
+                <div class="timer-container">
+                    <div id="barra-progreso" class="timer-bar"></div>
+                </div>
+                <p class="contador-texto">Tiempo pregunta: <span id="contador-numero">20</span>s</p>
+            </div>
+
+            <button id="btnSiguiente" class="btn-siguiente">Siguiente Pregunta</button>
+            <button id="btnGuardarEnviar" class="btn-primario">Guardar y Enviar Todo</button>
+        </div>
+    </div>
+
+    <div id="pantalla-final" style="display:none;"></div>
+</div>
+
+<audio id="reproductor"></audio>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6HIR_88Bug0xsTpaqqXnnwe-aMTihGenTkHXdPfaf3rGZ6KMqNZfCF9ofEB_u7fR00w/exec";
+    let datosEstudiante = null;
+    let preguntasVistas = new Set();
+    let enFocoInput = false;
+    let numCarnet = "";
+    let examenIniciado = false;
+    let examenFinalizado = false;
+
+    function manejarBloqueoTeclado(e) {
+        if (enFocoInput) return true;
+        if (e.keyCode == 116) { mostrarModalSalir(); e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.keyCode == 82)) { mostrarModalSalir(); e.preventDefault(); return false; }
+        if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || (e.shiftKey && e.keyCode == 73)))) { return false; }
+        return false;
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        if (examenIniciado && !examenFinalizado) {
+            e.preventDefault();
+            e.returnValue = '¿Desea salir del examen? Se perderá el avance.';
+            return e.returnValue;
+        }
+    });
+
+    function mostrarModalSalir(){ if (!examenIniciado || examenFinalizado) return; document.getElementById('modal-salir').style.display = 'flex'; }
+    function cancelarSalida(){ document.getElementById('modal-salir').style.display = 'none'; }
+    function confirmarSalida(){ examenFinalizado = true; try { window.close(); } catch(e){} window.location.href = 'about:blank'; }
+
+    const _k = [2,3,3,0,0, 1,0,2,0,3, 0,2,1,3,1, 3,1,1,2,3, 3,1,0,0,1, 0,3,3,2,3, 1,3,3,2,2, 1,0,2,1,2, 1,0,3,0,2, 0,1,0,3,2];
+
+		const examenData = [
+			// --- PARTE 1: LISTENING (1 - 25) ---
+			{ audio: "1_A.mp3", pregunta: "1. Yes, it’s _____.", tipo: "texto", opciones: ["fatal", "minor", "essential", "poisonous"] },
+			{ audio: "2_A.mp3", pregunta: "2. I’m making a _____.", tipo: "texto", opciones: ["deposit", "choice", "shelf", "meal"] },
+			{ audio: "3_A.mp3", pregunta: "3. They ran out of _____.", tipo: "texto", opciones: ["nails", "cords", "sandpaper", "ammunition"] },
+			{ audio: "4_A.mp3", pregunta: "4. No, I _____ it by accident.", tipo: "texto", opciones: ["shot", "left", "found", "opened"] },
+			{ audio: "5_A.mp3", pregunta: "5. Yes, I’ll _____.", tipo: "texto", opciones: ["give you a hand", "drive back and forth", "catch up with you", "go shopping"] },
+
+			{ audio: "6_A.mp3", pregunta: "6. Yes, that’s our _____.", tipo: "texto", opciones: ["department", "goal", "argument", "enemy"] },
+			{ audio: "7_A.mp3", pregunta: "7. Yes, your _____ was long.", tipo: "texto", opciones: ["message", "book", "article", "homework"] },
+			{ audio: "8_A.mp3", pregunta: "8. She _____.", tipo: "texto", opciones: ["breathed", "shouted", "fainted", "jogged"] },
+			{ audio: "9_A.mp3", pregunta: "9. Yes, I like working _____.", tipo: "texto", opciones: ["with wood", "in an office", "overseas", "at the hospital"] },
+			{ audio: "10_A.mp3", pregunta: "10. Yes, she _____ my student.", tipo: "texto", opciones: ["wants to be", "is now", "will be", "used to be"] },
+			{ audio: "11_A.mp3", pregunta: "11. The _____ is too hard.", tipo: "texto", opciones: ["ground", "program", "course", "bread"] },
+			{ audio: "12_A.mp3", pregunta: "12. No, she wasn’t _____.", tipo: "texto", opciones: ["wearing a uniform", "stopping a crime", "carrying a gun", "holding a bag"] },
+
+			{ audio: "13_A.mp3", pregunta: "13. You need a _____.", tipo: "texto", opciones: ["saw", "bolt", "lens", "tray"] },
+			{ audio: "14_A.mp3", pregunta: "14. Yes, it’s _____.", tipo: "texto", opciones: ["critical", "minor", "cheap", "huge"] },
+			{ audio: "15_A.mp3", pregunta: "15. Yes, I _____.", tipo: "texto", opciones: ["used the recipe", "marked the list", "read the book", "paid the bill"] },
+			{ audio: "16_A.mp3", pregunta: "16. Some food got stuck in her _____.", tipo: "texto", opciones: ["eye", "hair", "teeth", "throat"] },
+			{ audio: "17_A.mp3", pregunta: "17. No, several of them are _____.", tipo: "texto", opciones: ["familiar", "bare", "complicated", "electrical"] },
+			{ audio: "18_A.mp3", pregunta: "18. They _____ a serious illness.", tipo: "texto", opciones: ["treated", "discovered", "received", "avoided"] },
+			{ audio: "19_A.mp3", pregunta: "19.", tipo: "texto", opciones: ["He helped me carry my baggage.", "A shovel was used to dig into the ground.", "He was very tall and had long black hair.", "The shell remained after the bullet was fired."] },
+
+			{ audio: "20_A.mp3", pregunta: "20.", tipo: "texto", opciones: ["A drill is used to bore holes.", "The suspect has brown hair.", "The firing pin strikes the cartridge.", "I need directions to the gas station."] },
+			{ audio: "21_A.mp3", pregunta: "21. There’s _____ over there.", tipo: "texto", opciones: ["an object", "some rust", "some poison", "an entrance"] },
+			{ audio: "22_A.mp3", pregunta: "22.", tipo: "texto", opciones: ["Please help me move my car.", "I make surfaces smooth with it.", "The firing pin strikes the cartridge.", "The suspect is wearing black jeans."] },
+			{ audio: "23_A.mp3", pregunta: "23. That’s my _____.", tipo: "texto", opciones: ["stuff", "aim", "workshop", "daughter"] },
+			{ audio: "24_A.mp3", pregunta: "24. Yes, I was _____ there.", tipo: "texto", opciones: ["born", "visiting", "on vacation", "on a mission"] },
+
+			{
+				audio: "25_A.mp3",
+				pregunta: "25. Look at the picture, and listen to the description of a firearm part. Identify the correct part by selecting a, b, c, or d.",
+				imagen: "25_A.png",
+				tipo: "etapa2",
+				opciones: ["sight", "magazine", "trigger", "barrel"]
+			},
+
+			// --- PARTE 2: READING (26 - 50) ---
+			{ audio: null, pregunta: "26. Mrs. Smith chose _____.", tipo: "texto", opciones: ["Katie as her secretary", "as Katie her secretary", "as her secretary Katie", "her secretary Katie as"] },
+			{ audio: null, pregunta: "27. Gun _____ is a dry substance used in guns.", tipo: "texto", opciones: ["rust", "glue", "handle", "powder"] },
+			{ audio: null, pregunta: "28. Ben: Do you want a car that has automatic windows? Phil: Yes, I’d prefer one _____ automatic windows.", tipo: "texto", opciones: ["that with", "has with", "has", "with"] },
+			{ audio: null, pregunta: "29. You look _____.", tipo: "texto", opciones: ["are tired as if you", "you are tired as if", "as if you are tired", "as if are tired you"] },
+			{ audio: null, pregunta: "30. The injured man was taken to the hospital by _____.", tipo: "texto", opciones: ["incident", "cartridge", "extension", "ambulance"] },
+			{ audio: null, pregunta: "31. Ben bought _____ house.", tipo: "texto", opciones: ["a white old", "an old white", "old a white", "white an old"] },
+
+			{ audio: null, pregunta: "32. Ben: I have seen that movie already. Phil: What did Ben say? Kim: Ben said that he _____ that movie already.", tipo: "texto", opciones: ["is seeing", "will see", "has seen", "had seen"] },
+			{ audio: null, pregunta: "33. Sports don’t really _____ me.", tipo: "texto", opciones: ["discharge", "approach", "connect", "interest"] },
+			{ audio: null, pregunta: "34. _____ to study Spanish?", tipo: "texto", opciones: ["You like do", "Like you do", "Do you like", "Do like you"] },
+			{ audio: null, pregunta: "35. I _____ call you, but I couldn’t find a phone.", tipo: "texto", opciones: ["can", "had better", "was going to", "am unable to"] },
+			{ audio: null, pregunta: "36. The president _____ a national emergency.", tipo: "texto", opciones: ["saluted", "declared", "exploded", "concerned"] },
+			{ audio: null, pregunta: "37. I think I broke my toe because it’s _____ to walk.", tipo: "texto", opciones: ["painful", "painless", "painfully", "painlessly"] },
+
+			{ audio: null, pregunta: "38. The helicopter _____ into the freezing water.", tipo: "texto", opciones: ["fit", "dug", "crashed", "joined"] },
+			{ audio: null, pregunta: "39. I believe that _____.", tipo: "texto", opciones: ["is going to snow", "it’s going to snow", "to snow", "snows"] },
+			{ audio: null, pregunta: "40. The man _____ because of his hard work.", tipo: "texto", opciones: ["was promoting", "had promoted", "got promoted", "promoted"] },
+			{ audio: null, pregunta: "41. Police deal with dangerous _____ every day.", tipo: "texto", opciones: ["allergies", "incidents", "carpenters", "workshops"] },
+			{ audio: null, pregunta: "42. Ben _____ to his father on the phone right now.", tipo: "texto", opciones: ["is talking", "talks", "talked", "had talked"] },
+			{ audio: null, pregunta: "43. Everyone _____ the plane must check in their baggage.", tipo: "texto", opciones: ["boards", "will board", "is boarding", "boarding"] },
+			{ audio: null, pregunta: "44. A _____ was used to record the band’s music.", tipo: "texto", opciones: ["device", "snake", "note", "seat"] },
+
+			{ audio: null, pregunta: "45. I don’t like to fish, but I _____ like to hunt.", tipo: "texto", opciones: ["don’t", "doing", "do", "didn’t"] },
+			{ audio: null, pregunta: "46. Ben _____ a stick into the ground.", tipo: "texto", opciones: ["drove", "sanded", "sawed", "drank"] },
+			{ audio: null, pregunta: "47. Every morning I _____ up at 6:00 and then go for a jog.", tipo: "texto", opciones: ["am waking", "wake", "had woken", "woke"] },
+
+			{
+				audio: null,
+				pregunta: "48. Read the paragraph. Then select the word (a, b, c, or d) which the italicized word refers to. Certain pieces of protective equipment are useful for a variety of situations. Gloves, for example, are used to protect the hands. They are worn by people like baseball players and gardeners whose hands are extremely important for their jobs. A hand injury is not good for these people because it stops them from participating in their normal activities. Therefore, gloves are a necessary piece of equipment. In line 2, they refers to _____.",
+				tipo: "texto",
+				opciones: ["gloves", "pieces", "situations", "hands"]
+			},
+			{
+				audio: null,
+				pregunta: "49. Read the paragraph. Then select the word (a, b, c, or d) which the italicized word refers to. Certain pieces of protective equipment are useful for a variety of situations. Gloves, for example, are used to protect the hands. They are worn by people like baseball players and gardeners whose hands are extremely important for their jobs. A hand injury is not good for these people because it stops them from participating in their normal activities. Therefore, gloves are a necessary piece of equipment. In line 4, it refers to _____.",
+				tipo: "texto",
+				opciones: ["variety", "baseball", "equipment", "injury"]
+			},
+     
+			{
+				audio: null,
+				pregunta: "50. Read the outline, and select the best summary: a, b, c, or d.",
+				imagen: "50_A.png",
+				tipo: "etapa2",
+				opciones: [
+					"Strong winds may result in damage to buildings and trees as well as a rise in the height of ocean water.",
+					"During a hurricane, lightning may disable electrical systems or strike animals or people.",
+					"The three main effects of hurricanes are large amounts of rain, strong winds, and lightning.",
+					"Floods are the result of too much rain. Floods may cause electrical problems and damage to buildings."
+				]
+			}
+		];
+
+    let indice = 0, respuestas = [], intervalo, temporizador, enPausa = false;
+    let imgOk = false, audioOk = false, modoRevision = false;
+    let chequeoRedIntervalo = null;
+
+    const TIEMPO_PREGUNTA_NORMAL = 20000;
+
+	/* Todas las preguntas usan 20 segundos */
+	function tiempoParaPregunta(i){ return TIEMPO_PREGUNTA_NORMAL; }
+
+    /* Umbral de caracteres para activar letra pequeña en la pregunta */
+    const UMBRAL_TEXTO_LARGO = 120;
+
+    let tiempoGlobalSegundos = 45 * 60;
+    let intervaloGlobal = null;
+    let relojGlobalIniciado = false;
+
+    const reproductor = document.getElementById('reproductor');
+    const avisoRed = document.getElementById('aviso-conexion');
+
+    function actualizarPanelNavegacion() {
+        const grid = document.getElementById('nav-grid');
+        grid.innerHTML = '';
+        examenData.forEach((_, i) => {
+            const item = document.createElement('div');
+            item.className = 'nav-item';
+            if (i === indice) item.classList.add('active');
+            if (respuestas[i] !== undefined && respuestas[i] !== null) item.classList.add('answered');
+            item.innerText = i + 1;
+            item.onclick = () => { if(modoRevision || i >= 25) { indice = i; mostrarPregunta(); } };
+            grid.appendChild(item);
+        });
+    }
+
+    function iniciarRelojGlobal() {
+        if (relojGlobalIniciado) return;
+        relojGlobalIniciado = true;
+        intervaloGlobal = setInterval(() => {
+            if (!enPausa) {
+                tiempoGlobalSegundos--;
+                let m = Math.floor(tiempoGlobalSegundos / 60);
+                let s = tiempoGlobalSegundos % 60;
+                document.getElementById('reloj-global').innerText = m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+                if (tiempoGlobalSegundos <= 0) { clearInterval(intervaloGlobal); if (!examenFinalizado) procesarEnvioFinal(); }
+            }
+        }, 1000);
+    }
+
+    async function actualizarAvanceNube() {
+        if (!datosEstudiante) return;
+        preguntasVistas.add(indice);
+        const totalResp = respuestas.filter(r => r !== undefined && r !== null).length;
+        const avanceTexto = 'Vistas: ' + preguntasVistas.size + ', Resp: ' + totalResp;
+        let aciertos = 0;
+        respuestas.forEach((res, i) => { if (res === _k[i]) aciertos++; });
+        const notaActual = (aciertos * 2) + ' / 100';
+        let letraParaHoja = "No respondido";
+        let esCorrecta = false;
+        if (respuestas[indice] !== undefined && respuestas[indice] !== null) {
+            letraParaHoja = respuestas[indice];
+            esCorrecta = (respuestas[indice] === _k[indice]);
+        }
+        try {
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'avance', fila: datosEstudiante.fila, avance: avanceTexto, notaParcial: notaActual, preguntaIndice: indice, letra: letraParaHoja, esCorrecto: esCorrecta }) });
+        } catch (e) { console.error("Error al sincronizar"); }
+    }
+
+    function pausarPorRed() {
+        if (enPausa) return;
+        enPausa = true;
+        avisoRed.style.display = 'flex';
+        try { reproductor.pause(); } catch(e){}
+        clearInterval(intervalo);
+        clearTimeout(temporizador);
+        if (!chequeoRedIntervalo) {
+            chequeoRedIntervalo = setInterval(() => { if (navigator.onLine) cargarRecursosPreguntaActual(); }, 1000);
+        }
+    }
+
+    function cargarRecursosPreguntaActual() {
+        const data = examenData[indice];
+        imgOk = (data.tipo === "texto") || !data.imagen;
+        audioOk = (data.audio === null) || modoRevision;
+        if (data.imagen) {
+            const img = new Image();
+            img.onload = () => { imgOk = true; verificarSiPodemosSeguir(); };
+            img.onerror = () => { imgOk = false; pausarPorRed(); };
+            img.src = data.imagen + "?t=" + Date.now();
+        }
+        if (data.audio && !modoRevision) {
+            try {
+                reproductor.oncanplaythrough = () => { audioOk = true; verificarSiPodemosSeguir(); };
+                reproductor.onerror = () => { audioOk = false; pausarPorRed(); };
+                reproductor.src = data.audio + "?t=" + Date.now();
+                reproductor.load();
+            } catch(e){ pausarPorRed(); }
+        } else { verificarSiPodemosSeguir(); }
+    }
+
+    function verificarSiPodemosSeguir() {
+        if (imgOk && audioOk && navigator.onLine) {
+            clearInterval(chequeoRedIntervalo);
+            chequeoRedIntervalo = null;
+            enPausa = false;
+            avisoRed.style.display = 'none';
+            if (!examenIniciado) { examenIniciado = true; iniciarRelojGlobal(); }
+            if (examenData[indice].audio && !modoRevision) { reproductor.play().catch(() => {}); }
+            if (!modoRevision && indice < 25) {
+                document.getElementById('wrapper-timer').style.visibility = 'visible';
+                empezarTimer(tiempoParaPregunta(indice));
+            } else {
+                document.getElementById('wrapper-timer').style.visibility = 'hidden';
+            }
+        }
+    }
+
+    window.addEventListener('offline', pausarPorRed);
+    window.addEventListener('online', () => { if (enPausa) cargarRecursosPreguntaActual(); });
+
+    document.getElementById('btnIniciar').onclick = async () => {
+        const inputCarnet = document.getElementById('input-carnet');
+        const valor = inputCarnet.value.trim();
+        if (valor === "") { alert("Por favor, ingrese su número de carnet."); return; }
+        const pantallaCarga = document.getElementById('pantalla-carga-final');
+        const msjCarga = document.getElementById('mensaje-carga-final');
+        pantallaCarga.style.display = 'flex';
+        msjCarga.innerText = "Validando registro y horario...";
+        try {
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'validar', carnet: valor }) });
+            const res = await response.json();
+            if (res.success) {
+                if (res.yaRealizo) {
+                    pantallaCarga.style.display = 'none';
+                    alert('Hola ' + res.nombre + ', ya realizaste este examen.\nTu nota registrada fue: ' + res.nota);
+                } else {
+                    datosEstudiante = res;
+                    numCarnet = valor;
+                    msjCarga.innerText = "Cargando primera pregunta...";
+                    document.getElementById('pantalla-inicio').style.display = 'none';
+                    document.getElementById('nav-panel').style.display = 'block';
+                    document.getElementById('pantalla-pregunta').style.display = 'block';
+                    mostrarPregunta();
+                    const espera = setInterval(() => { if (examenIniciado) { pantallaCarga.style.display = 'none'; clearInterval(espera); } }, 200);
+                }
+            } else {
+                pantallaCarga.style.display = 'none';
+                alert(res.mensaje || "Usted no se encuentra habilitado o registrado para este examen.");
+            }
+        } catch (e) {
+            pantallaCarga.style.display = 'none';
+            alert("Error de conexión. Intente de nuevo.");
+        }
+    };
+
+    function mostrarPregunta() {
+        if (indice >= examenData.length) { activarModoRevision(); return; }
+        actualizarAvanceNube();
+        actualizarPanelNavegacion();
+        const data = examenData[indice];
+        const zona = document.getElementById('zona-dinamica');
+        zona.innerHTML = '<div id="espacio-imagen"></div><div id="contenedor-opciones"></div>';
+        const espacioImg = document.getElementById('espacio-imagen');
+        const contenedorOpts = document.getElementById('contenedor-opciones');
+
+        /* Tiempo mostrado en el contador */
+        document.getElementById('contador-numero').innerText = Math.round(tiempoParaPregunta(indice)/1000);
+
+        /* Referencia al elemento de texto de la pregunta */
+        var elTexto = document.getElementById('texto-pregunta');
+
+        /* Si el texto de la pregunta supera el umbral, aplicar clase de letra pequeña */
+        if (data.pregunta.length > UMBRAL_TEXTO_LARGO) {
+            elTexto.className = 'texto-pregunta texto-largo';
+        } else {
+            elTexto.className = 'texto-pregunta';
+        }
+        elTexto.innerText = data.pregunta;
+
+        if (data.tipo === "visual") {
+            contenedorOpts.className = "contenedor-opciones-circular";
+            const img = document.createElement('img');
+            img.className = 'imagen-pregunta';
+            img.src = data.imagen;
+            espacioImg.appendChild(img);
+            ['A', 'B', 'C', 'D'].forEach((letra, i) => {
+                const div = document.createElement('div');
+                div.className = 'division-opcion';
+                const btn = document.createElement('button');
+                btn.className = 'opcion-btn-circular' + (respuestas[indice] === i ? ' seleccionada' : '');
+                btn.innerText = letra;
+                btn.onclick = () => {
+                    document.querySelectorAll('.opcion-btn-circular').forEach(b => b.classList.remove('seleccionada'));
+                    btn.classList.add('seleccionada');
+                    respuestas[indice] = i;
+                    actualizarPanelNavegacion();
+                    actualizarAvanceNube();
+                };
+                div.appendChild(btn);
+                contenedorOpts.appendChild(div);
+            });
+        }
+        else if (data.tipo === "texto") {
+            contenedorOpts.className = "contenedor-opciones-vertical";
+            data.opciones.forEach((texto, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'opcion-btn-vertical' + (respuestas[indice] === i ? ' seleccionada' : '');
+                btn.innerHTML = '<strong>' + String.fromCharCode(65 + i) + '.</strong>  ' + texto;
+                btn.onclick = () => {
+                    document.querySelectorAll('.opcion-btn-vertical').forEach(b => b.classList.remove('seleccionada'));
+                    btn.classList.add('seleccionada');
+                    respuestas[indice] = i;
+                    actualizarPanelNavegacion();
+                    actualizarAvanceNube();
+                };
+                contenedorOpts.appendChild(btn);
+            });
+        }
+        else if (data.tipo === "etapa2") {
+            elTexto.innerText = "";
+            elTexto.className = 'texto-pregunta';
+            zona.innerHTML = '<div class="layout-etapa2"><img src="' + data.imagen + '" class="img-lateral"><div class="columna-opciones"><p style="font-size:1.2em; font-weight:700; margin-bottom:14px; text-align: center; color:var(--navy);">' + data.pregunta + '</p><div id="sub-opts"></div></div></div>';
+            const subOpts = document.getElementById('sub-opts');
+            data.opciones.forEach((texto, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'opcion-btn-vertical' + (respuestas[indice] === i ? ' seleccionada' : '');
+                btn.style.marginBottom = "8px";
+                btn.innerHTML = '<strong>' + String.fromCharCode(65 + i) + '.</strong> ' + texto;
+                btn.onclick = () => {
+                    document.querySelectorAll('.opcion-btn-vertical').forEach(b => b.classList.remove('seleccionada'));
+                    btn.classList.add('seleccionada');
+                    respuestas[indice] = i;
+                    actualizarPanelNavegacion();
+                    actualizarAvanceNube();
+                };
+                subOpts.appendChild(btn);
+            });
+        }
+        cargarRecursosPreguntaActual();
+    }
+
+    function activarModoRevision() {
+        modoRevision = true;
+        clearInterval(intervalo); clearTimeout(temporizador);
+        document.getElementById('wrapper-timer').style.display = 'none';
+        document.getElementById('btnSiguiente').style.display = 'none';
+        document.getElementById('btnGuardarEnviar').style.display = 'inline-block';
+        indice = 0;
+        mostrarPregunta();
+    }
+
+    function empezarTimer(ms) {
+        clearInterval(intervalo);
+        clearTimeout(temporizador);
+        let queda = ms;
+        const barra = document.getElementById('barra-progreso');
+        barra.style.transition = 'none';
+        barra.style.width = '100%';
+        document.getElementById('contador-numero').innerText = Math.round(ms/1000);
+        setTimeout(() => { if (enPausa) return; barra.style.transition = 'width ' + ms + 'ms linear'; barra.style.width = '0%'; }, 50);
+        intervalo = setInterval(() => { if (!enPausa) { queda -= 1000; if (queda >= 0) document.getElementById('contador-numero').innerText = Math.ceil(queda / 1000); } }, 1000);
+        temporizador = setTimeout(() => { if (!enPausa) { actualizarAvanceNube(); indice++; mostrarPregunta(); } }, ms);
+    }
+
+    document.getElementById('btnGuardarEnviar').onclick = () => { document.getElementById('modal-confirmacion').style.display = 'flex'; };
+    function cerrarModal() { document.getElementById('modal-confirmacion').style.display = 'none'; }
+
+    async function procesarEnvioFinal() {
+        cerrarModal();
+        clearInterval(intervaloGlobal);
+        examenFinalizado = true;
+        const pantallaCarga = document.getElementById('pantalla-carga-final');
+        const msjCarga = document.getElementById('mensaje-carga-final');
+        pantallaCarga.style.display = 'flex';
+        msjCarga.innerText = "Guardando respuestas...";
+        const aciertos = respuestas.filter((r, i) => r === _k[i]).length;
+        const notaSobre100 = aciertos * 2;
+        const notaFinal = notaSobre100 + ' / 100';
+        let detallesResultados = [];
+        for (let i = 0; i < examenData.length; i++) { detallesResultados.push(respuestas[i] === _k[i] ? "Correcto" : "Incorrecto"); }
+        try {
+            const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'guardar', fila: datosEstudiante ? datosEstudiante.fila : null, nota: notaFinal, detalles: detallesResultados }) });
+            const res = await response.json();
+            if (res.success) {
+                msjCarga.innerText = "¡Datos guardados con éxito!";
+                setTimeout(() => { pantallaCarga.style.display = 'none'; finalizar(res.fecha, notaFinal); }, 1200);
+            } else { pantallaCarga.style.display = 'none'; finalizar("Error en servidor", notaFinal); }
+        } catch (e) {
+            pantallaCarga.style.display = 'none';
+            alert("Error al guardar en la nube. Se mostrará el resultado localmente.");
+            finalizar("Error en servidor", notaFinal);
+        }
+    }
+
+    function finalizar(fecha, nota) {
+        document.getElementById('nav-panel').style.display = 'none';
+        document.getElementById('pantalla-pregunta').style.display = 'none';
+        const finalDiv = document.getElementById('pantalla-final');
+        const hoy = new Date();
+        const meses = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+        const fechaTexto = hoy.getDate() + ' DE ' + meses[hoy.getMonth()] + ' DEL ' + hoy.getFullYear();
+        const nombreEst = datosEstudiante ? datosEstudiante.nombre : "Estudiante";
+        finalDiv.innerHTML = '<div class="card-resultado" id="certificado-area"><img src="LOGO_EIE.png" style="width: 56px; margin-bottom: 4px;" onerror="this.style.display=\'none\'"><h3>RESULTADO DE EVALUACIÓN</h3><div class="detalle-final"><p><strong>ESTUDIANTE:</strong> ' + nombreEst + '</p><p><strong>C.I.:</strong> ' + numCarnet + '</p><p><strong>FECHA:</strong> ' + fechaTexto + '</p></div><div class="nota-destacada">NOTA OBTENIDA: ' + nota + '</div><div class="no-exportar" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"><button onclick="descargarPDF()" class="btn-primario btn-mostaza">📥 DESCARGAR PDF</button><button onclick="window.location.href=\'https://eievirtual2026.github.io/LOGIN/\'" class="btn-primario">🏠 INICIO</button></div></div>';
+        finalDiv.style.display = 'block';
+    }
+
+    document.getElementById('btnSiguiente').onclick = function() {
+        if (!enPausa) { clearInterval(intervalo); clearTimeout(temporizador); indice++; mostrarPregunta(); }
+    };
+
+    function descargarPDF() {
+        const nombreEst = datosEstudiante ? datosEstudiante.nombre : "Estudiante";
+        const hoy = new Date();
+        const meses = ["ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO","JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"];
+        const fechaTexto = hoy.getDate() + " DE " + meses[hoy.getMonth()] + " DEL " + hoy.getFullYear();
+        var notaTexto = "0 / 100";
+        var elNota = document.querySelector('.nota-destacada');
+        if (elNota) notaTexto = elNota.innerText;
+        var contenido = '<div style="padding:40px 30px; text-align:center; font-family:Arial,Helvetica,sans-serif; color:#0b1b34; background:#fff;">'
+            + '<div style="display:inline-block; width:12px; height:12px; background:#e1b12c; border-radius:50%; margin-bottom:6px; box-shadow:0 0 0 4px rgba(225,177,44,0.25);"></div>'
+            + '<p style="margin:0 0 4px; font-size:13px; color:#5b6b85; font-weight:500;">EIE &middot; Escuela de Idiomas del Ej&eacute;rcito</p>'
+            + '<div style="width:60px; height:4px; background:#0b2447; margin:12px auto 20px; border-radius:2px;"></div>'
+            + '<h2 style="margin:0 0 18px; font-size:22px; font-weight:800; color:#0b2447; letter-spacing:0.5px;">RESULTADO DE EVALUACI&Oacute;N</h2>'
+            + '<div style="text-align:left; background:#f7f9fc; padding:18px 24px; border-radius:10px; max-width:380px; margin:0 auto 20px; line-height:1.7; font-size:14px; border:1px solid #dbe2ec;">'
+            + '<p style="margin:4px 0;"><strong>ESTUDIANTE:</strong> ' + nombreEst + '</p>'
+            + '<p style="margin:4px 0;"><strong>C.I.:</strong> ' + numCarnet + '</p>'
+            + '<p style="margin:4px 0;"><strong>FECHA:</strong> ' + fechaTexto + '</p></div>'
+            + '<div style="font-size:26px; font-weight:800; color:#0b2447; background:linear-gradient(180deg,#fff8e1,#fdecb1); padding:16px 24px; margin:16px auto; border-radius:10px; display:inline-block; border:2px solid #e1b12c; letter-spacing:0.5px;">' + notaTexto + '</div>'
+            + '<div style="width:60px; height:4px; background:#0b2447; margin:20px auto 0; border-radius:2px;"></div>'
+            + '<p style="margin:10px 0 0; font-size:11px; color:#5b6b85;">TEST BOOK 10 &mdash; Documento generado autom&aacute;ticamente</p></div>';
+        var opciones = {
+            margin: 15,
+            filename: 'Resultado_' + (numCarnet || 'EIE') + '.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: false, allowTaint: true, backgroundColor: '#ffffff', logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opciones).from(contenido).save().catch(function(err) { console.error('Error PDF:', err); alert('No se pudo generar el PDF. Intente nuevamente.'); });
+    }
+</script>
+</body>
+</html>
